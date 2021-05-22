@@ -1,0 +1,153 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+  
+  <!-- 1. Project default -->
+  <groupId>was</groupId>
+  <artifactId>was</artifactId>
+  <version>0.1</version>
+  <name>was</name>
+  <url>https://github.com/bongkyunpark/was</url>
+  <packaging>jar</packaging>
+  
+ <!-- 2. Project settings -->
+  <properties>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+      <java.version>1.8</java.version>
+      <buildDirectory>${project.basedir}/target</buildDirectory>
+  </properties>
+
+<!-- 3. Dependencies -->
+  <dependencies>
+    <!-- unit testing -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+    <groupId>com.typesafe</groupId>
+    <artifactId>config</artifactId>
+    <version>1.3.1</version>
+        </dependency>
+       <!-- Logback -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+  </dependencies>
+
+  <!-- 4. Build -->
+  <build>
+     <directory>${buildDirectory}</directory>        
+     <finalName>${project.artifactId}</finalName>
+
+     <resources>
+         <resource>
+             <directory>${basedir}/src/main/resources</directory>
+             <!-- <excludes><exclude>application.properties</exclude></excludes> -->
+         </resource>
+     </resources>
+     <plugins>
+         <plugin>
+             <groupId>org.apache.maven.plugins</groupId>
+             <artifactId>maven-compiler-plugin</artifactId>
+             <version>3.8.0</version>
+                 <configuration>
+                     <source>1.8</source>
+                     <target>1.8</target>
+                     <encoding>utf-8</encoding>
+                 </configuration>
+         </plugin>
+
+         <!-- build a single executable JAR -->
+         <plugin>
+             <groupId>org.apache.maven.plugins</groupId>
+             <artifactId>maven-shade-plugin</artifactId>
+             <version>3.2.1</version>
+             <executions>
+                 <!-- Attach the shade into the package phase -->
+                 <execution>
+                     <phase>package</phase>
+                     <goals>
+                         <goal>shade</goal>
+                     </goals>
+                     <configuration>
+                         <transformers>
+                             <transformer
+                                     implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                 <mainClass>was.App</mainClass>
+                             </transformer>
+                         </transformers>
+                     </configuration>
+                 </execution>
+             </executions>
+         </plugin>
+          
+          <!-- output폴더 프로젝트 하위로 이동-->
+          <plugin>
+             <groupId>org.apache.maven.plugins</groupId>
+             <artifactId>maven-jar-plugin</artifactId>
+             <version>2.3.2</version>
+             <configuration>
+               <outputDirectory>${basedir}</outputDirectory>
+             </configuration>
+          </plugin>
+            <!-- dependency plugin copy 안됨
+                      다른방법으로 변경
+             -->
+            <!--  
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>was.App</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            -->
+            <!-- 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>
+                                ${project.build.directory}/lib
+                            </outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+             -->
+    </plugins>
+  </build>
+ 
+</project>
