@@ -5,7 +5,7 @@
       "routes": {
         "/Hello": "Hello",
         "/service.Hello": "service.Hello",
-        "/error.Hello": "error.Hello",
+        "/error.Hello": "service.Error",
         "/Greeting": "Hello",
         "/super.Greeting": "service.Hello",
         "/time": "Time"

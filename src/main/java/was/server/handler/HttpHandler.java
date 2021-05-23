@@ -114,51 +114,12 @@ public class HttpHandler implements Runnable {
             filePath = ROOT_PATH + properties.getDefaultServer().getHttproot() + filePath;
             file = new File(filePath);
             
-            System.err.println("filePath :  "+ filePath);
-            
             if (file.canRead()) {
                 
                 success(response, file);
                 
             } else {
-                
-                // router 구현 (mapping.json)
-                RouterModule routers = properties.getRouters();
-                String packageName = routers.getUriPackage(request.getUrl());
-                if(packageName != null) {
-                    try {
-                        
-                        //servlet dispatcher
-                        SimpleServlet sServlet = null;
-                        String methodName = routers.getRouter(packageName).getRouter(request.getUrl());
-                        Class<SimpleServlet> forName = ((Class<SimpleServlet>) Class.forName(packageName + "." + methodName));
-
-                        try {
-                            sServlet = forName.newInstance();
-                        } catch (InstantiationException e) {
-                            logger.error(e.getMessage(), e);
-                        } catch (IllegalAccessException e) {
-                            logger.error(e.getMessage(), e);
-                        }
-
-                        if(sServlet != null) {
-                            response.setVersion(request.getHeader().getVersion());
-                            response.setResponseCode("200 OK");
-                            response.setContentType("text/html");
-                            response.setLength(0);
-                            response.sendHeader();
-                            sServlet.service(request, response);
-                            response.getWriter().flush();
-                        }
-                    } catch (ClassNotFoundException e) {
-                        notFound(response, null);
-//                        throw new Exception("Not Found Class");
-                        
-                    }
-                } else {
-                    file = new File(ROOT_PATH + properties.getDefaultServer().getPage404());
-                    notFound(response, file);
-                }
+            	dispatch(request, response);
             }
             logger.info(response.toString());
         } catch (FileNotFoundException e) {
@@ -189,7 +150,58 @@ public class HttpHandler implements Runnable {
         }
     }
     
+    public void dispatch(HttpRequest request, HttpResponse response) throws Exception  {
+    	
+        // 상대경로 가져오기.
+        File path = new File("");
+        //SRC 소스 위치
+        ROOT_PATH = path.getAbsolutePath();
+        
+    	ConfigModule properties = ConfigModule.getInstance();
+    	
+        // router 구현 (mapping.json)
+    	RouterModule routers = properties.getRouters();
+        String packageName = routers.getUriPackage(request.getUrl());
+        if(packageName != null) {
+            try {
+                
+                //servlet dispatcher
+                SimpleServlet sServlet = null;
+                String methodName = routers.getRouter(packageName).getRouter(request.getUrl());
+                Class<SimpleServlet> forName = ((Class<SimpleServlet>) Class.forName(packageName + "." + methodName));
 
+                try {
+                    sServlet = forName.newInstance();
+                } catch (InstantiationException e) {
+                    logger.error(e.getMessage(), e);
+                } catch (IllegalAccessException e) {
+                    logger.error(e.getMessage(), e);
+                }
+
+                if(sServlet != null) {
+                    response.setVersion(request.getHeader().getVersion());
+                    response.setResponseCode("200 OK");
+                    response.setContentType("text/html");
+                    response.setLength(0);
+                    response.sendHeader();
+                    sServlet.service(request, response);
+                    response.getWriter().flush();
+                }
+            } catch (ClassNotFoundException | IOException e) {
+            	path = new File(ROOT_PATH + properties.getDefaultServer().getPage404());
+                notFound(response, path);
+//                throw new Exception("Not Found Class");
+                logger.info(response.toString());
+	        } catch (Exception e) {
+	            logger.error(e.getMessage(), e);
+	            path = new File(ROOT_PATH + properties.getDefaultServer().getPage500());
+	            error(response, path);
+	            logger.info(response.toString());
+	        }
+        }
+    }
+    
+    
     public String makeHtmlByCode(String HttpCode) {
 
         StringBuilder sb = new StringBuilder();
@@ -208,7 +220,9 @@ public class HttpHandler implements Runnable {
     public void forbidden(HttpResponse response, File file) {
          byte[] data = new byte[0];
          try {
+        	 if(file != null) {
                  data = Files.readAllBytes(file.toPath());
+        	 }
              
         } catch (IOException e) {
              logger.error(e.getMessage(), e);
@@ -222,7 +236,13 @@ public class HttpHandler implements Runnable {
          }
 
          try {
-             response.setVersion(request.getHeader().getVersion());
+             
+        	 if(request != null) {
+        	 response.setVersion(request.getHeader().getVersion());
+        	 }else {
+        		 response.setVersion(Constants.HTTP_VERSION_1_1);
+        	 }
+             
              response.setResponseCode(HttpStatus.FORBIDDEN.toString());
              response.setContentType(Constants.HTML_CONTENT_TYPE);
              response.setLength(data.length);
@@ -238,7 +258,9 @@ public class HttpHandler implements Runnable {
     public void notFound(HttpResponse response, File file) {
         byte[] data = new byte[0];
         try {
+        	if(file != null) {
                data = Files.readAllBytes(file.toPath());
+        	}
             
         } catch (IOException e) {
              logger.error(e.getMessage(), e);
@@ -251,7 +273,12 @@ public class HttpHandler implements Runnable {
          }
 
         try {
-            response.setVersion(request.getHeader().getVersion());
+
+	       	 if(request != null) {
+	       	 response.setVersion(request.getHeader().getVersion());
+	       	 }else {
+	       		 response.setVersion(Constants.HTTP_VERSION_1_1);
+	       	 }
             response.setResponseCode(HttpStatus.NOT_FOUND.toString());
             response.setContentType(Constants.HTML_CONTENT_TYPE);
             response.setLength(data.length);
@@ -266,7 +293,9 @@ public class HttpHandler implements Runnable {
     public void error(HttpResponse response, File file) {
         byte[] data = new byte[0];
         try {
+        	if(file != null) {
             data = Files.readAllBytes(file.toPath());
+        	}
             
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
@@ -279,7 +308,12 @@ public class HttpHandler implements Runnable {
         }
         
         try {
-            response.setVersion(request.getHeader().getVersion());
+
+	       	 if(request != null) {
+	       	 response.setVersion(request.getHeader().getVersion());
+	       	 }else {
+	       		 response.setVersion(Constants.HTTP_VERSION_1_1);
+	       	 }
             response.setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.toString());
             response.setContentType(Constants.HTML_CONTENT_TYPE);
             response.setLength(data.length);
@@ -294,7 +328,9 @@ public class HttpHandler implements Runnable {
     public void success(HttpResponse response, File file) {
         byte[] data = new byte[0];
         try {
+        	if(file != null) {
             data = Files.readAllBytes(file.toPath());
+        	}
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
@@ -306,7 +342,14 @@ public class HttpHandler implements Runnable {
         }
         
         try {
-            response.setVersion(request.getHeader().getVersion());
+
+	       	 if(request != null) {
+	       	 response.setVersion(request.getHeader().getVersion());
+	       	 }else {
+	       		 response.setVersion(Constants.HTTP_VERSION_1_1);
+	       	 }
+
+	       	 
             response.setResponseCode(HttpStatus.OK.toString());
             
             //todo, file유형별로 contenttype 다르게 해줘야함

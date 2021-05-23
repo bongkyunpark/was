@@ -22,12 +22,14 @@ public class ConfigModule {
     private static String[] blockedExtension;
     private static ConfigModule instance = null;
     private static RouterModule routers;
-
+    private  String configFileName = "wasconfig.json";
+    private  String mappingFileName = "mapping.json";
+    
     private ConfigModule() throws Exception {
 
     	//spec 2 was config json
         try {
-            String fileContent = FileUtil.getFileContent("wasconfig.json");
+            String fileContent = FileUtil.getFileContent(configFileName);
             JSONParser parser = new JSONParser();
             Object obj = parser.parse(fileContent);
             JSONObject mapper = (JSONObject) obj;
@@ -47,13 +49,10 @@ public class ConfigModule {
             logger.warn("error: WAS config json loading error", e);
         }
 
-        logger.info(servers.getServer("was").toString());
-        logger.info(servers.getServer("simple").toString());
-
 
         //spec 6 simple servlet
         try {
-            String fileContent = FileUtil.getFileContent("mapping.json");
+            String fileContent = FileUtil.getFileContent(mappingFileName);
             JSONParser parser = new JSONParser();
             Object obj = parser.parse(fileContent);
             JSONObject mapper = (JSONObject) obj;
@@ -80,6 +79,8 @@ public class ConfigModule {
         }
         return ConfigModule.instance;
     }
+    
+    
 
     /**
      * Gets port.
@@ -153,4 +154,22 @@ public class ConfigModule {
         }
         return false;
     }
+
+	public String getConfigFileName() {
+		return configFileName;
+	}
+
+	public void setConfigFileName(String configFileName) {
+		this.configFileName = configFileName;
+	}
+
+	public String getMappingFileName() {
+		return mappingFileName;
+	}
+
+	public void setMappingFileName(String mappingFileName) {
+		this.mappingFileName = mappingFileName;
+	}
+    
+    
 }

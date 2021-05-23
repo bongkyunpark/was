@@ -40,6 +40,8 @@ public class Constants {
     public static final String SSL_PROTO_SSLv2      = "SSLv2";
     public static final String SSL_PROTO_SSLv2Hello = "SSLv2Hello";
     
+    public static final String HTTP_VERSION_1_1 = "HTTP/1.1";
+    
     private Constants() {
         // Hide default constructor
     }

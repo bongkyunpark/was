@@ -53,13 +53,20 @@ $ java –jar was.jar
 - 간단한 WAS 구현
   - SimpleServlet구현체로 Hello, Time 구현
   - servlet url 맵핑 정보  JSON으로 관리
+  - http://localhost:8080/Hello
+  - http://localhost:8080/service.Hello
+  - http://localhost:8080/Greeting
+  - http://localhost:8080/error.Hello
 
 - 현재 시각을 출력
   - http://localhost:8080/time
 
 
 - JUnit4 테스트 코드 작성
-  - 미구현
+  - HttpServerTest json Loading,상위경로 요청, 파일 확장자확인   테스트 작성
+  - HttpRequestTest Get header, method, path, version 테스트 작성
+  - HttpResponseTest HttpStatus 200, 403, 404, 500 테스트 작성
+  - SimpleServletTest Hello, service.Hello, time 테스트 작성
   
  - 프로젝트 주석에 문제에 명시된 것을 // spec 1. ~ 7. 으로 명시하였습니다.
 
