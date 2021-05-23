@@ -15,7 +15,7 @@
             </layout>
         </encoder>
     </appender>
-
+    <!--spec5. logback 처리 -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_PATH_NAME}</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">

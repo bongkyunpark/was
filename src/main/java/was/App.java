@@ -1,13 +1,12 @@
 package was;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import was.server.HttpServer;
+import was.server.module.ConfigModule;
 
-import was.webserver.HttpServer;
+//import was.webserver.HttpServer;
 
 
 
@@ -28,32 +27,60 @@ public class App
      */
     public static void main( String[] args )
     {
-    	String root_path = args[0];
+    	// singleton 패턴으로 static configuration 구현.
+        // server01, server02 설정 파일 분리.
+        ConfigModule properties = ConfigModule.getInstance();
 
-    	// get the Document root
-        File docroot;
-        try {
-//            docroot = new File(args[0]);
-            docroot = new File(root_path);
-        } catch (ArrayIndexOutOfBoundsException ex) {
-        	logger.error("Usage: java JHTTP docroot port");
-            return;
-        }
-        // set the port to listen on
         int port;
         try {
-            port = Integer.parseInt(args[1]);
+            port = Integer.parseInt(String.valueOf(properties.getPort()));
             if (port < 0 || port > 65535) port = 80;
-        } catch (RuntimeException ex) {
+        } catch (RuntimeException e) {
+            logger.warn(e.getMessage(), e);
             port = 80;
         }
         try {
-            HttpServer webserver = new HttpServer(docroot, port);
-            
-            logger.info("HTTP Server Starting");
+            logger.info("*--------------------------*");
+            logger.info("**      START SERVER      **");
+//            logger.info("**    SERVER COUNT : " + servers.getServerCount() + "    **");
+            logger.info("**       PORT: " + port + "       **");
+            logger.info("*--------------------------*");
+            HttpServer webserver = new HttpServer(port);
             webserver.start();
-        } catch (IOException ex) {
-            logger.error("Server could not start", ex);
+
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
         }
     }
+//    public static void main( String[] args )
+//    {
+//    	String root_path = args[0];
+//    	
+//    	// get the Document root
+//    	File docroot;
+//    	try {
+////            docroot = new File(args[0]);
+//    		docroot = new File(root_path);
+//    	} catch (ArrayIndexOutOfBoundsException ex) {
+//    		logger.error("Usage: java JHTTP docroot port");
+//    		return;
+//    	}
+//    	// set the port to listen on
+//    	int port;
+//    	try {
+//    		port = Integer.parseInt(args[1]);
+//    		if (port < 0 || port > 65535) port = 80;
+//    	} catch (RuntimeException ex) {
+//    		port = 80;
+//    	}
+//    	try {
+//    		HttpServer webserver = new HttpServer(docroot, port);
+//    		
+//    		logger.info("HTTP Server Starting");
+//    		webserver.start();
+//    	} catch (IOException ex) {
+//    		logger.error("Server could not start", ex);
+//    	}
+//    }
 }

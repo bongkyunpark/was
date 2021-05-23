@@ -1,0 +1,15 @@
+{
+  "mapping_package":[
+    {
+      "name": "simple",
+      "routes": {
+        "/Hello": "Hello",
+        "/service.Hello": "service.Hello",
+        "/error.Hello": "error.Hello",
+        "/Greeting": "Hello",
+        "/super.Greeting": "service.Hello",
+        "/time": "Time"
+      }
+    }
+  ]
+}
