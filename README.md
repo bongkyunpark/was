@@ -7,7 +7,7 @@
 * Maven Project
 * Logback
 * JSON
-* maven
+* junit4
 
 
 #### Install
@@ -71,8 +71,8 @@ $ java –jar was.jar
 
 참고
 ---
-### **Java8 표준 라이브러리 주소** <br/> https://docs.oracle.com/javase/8/docs/api/
-### **java-network-programming 주소** <br/> https://www.oreilly.com/library/view/java-network-programming/9781449365936/
+### **Java8 표준 라이브러리 ** <br/> https://docs.oracle.com/javase/8/docs/api/
+### **java-network-programming ** <br/> https://www.oreilly.com/library/view/java-network-programming/9781449365936/
 ### **Heep Header Type** <br/> https://gmlwjd9405.github.io/2019/01/28/http-header-types.html
 ### **메이븐 빌드 및 패키징** <br/>https://cornswrold.tistory.com/50
 ### **[Apache]가상 호스트(VirtualHost)설정** <br/>https://araikuma.tistory.com/807
